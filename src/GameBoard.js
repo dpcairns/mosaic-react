@@ -7,13 +7,15 @@ import TopDrawer from './TopDrawer.js';
 import MosaicTitle from './MosaicTitle.js';
 import audioStart, { playAudio, stopAudio } from './audio.js';
 import MusicDrawer from './MusicDrawer.js';
+import { getInitPlaybackState } from './helper.js';
 
 
 export default withRouter (class GameBoard extends Component {
 
 
     componentDidMount = async () => {
-        const schemeArray = await getScheme(this.props.startColor, this.props.mode)
+        const schemeArray = await getScheme(this.props.startColor, this.props.mode);
+        clearInterval(this.props.playInt);
 
 
         if (this.props.match.params.id) {
@@ -54,7 +56,8 @@ export default withRouter (class GameBoard extends Component {
                 gameboard: getInitGameState(), 
                 startColor: this.props.startColor,
                 musicboard: getInitGameState(),
-                colorName: this.props.colorName
+                colorName: this.props.colorName,
+                isPlaying: false
             })
         }
         audioStart();
@@ -103,12 +106,11 @@ export default withRouter (class GameBoard extends Component {
     }
 
     handlePlay = () => {
-
         clearInterval(this.props.playInt)
 
         let CountArray = [0, 0]    
         const mapOver = this.props.gameboard;
-        let blankBoard = getInitGameState();
+        let blankBoard = getInitPlaybackState();
 
         this.props.setAppState({ 
             gameboard: this.props.gameboard,
@@ -137,7 +139,12 @@ export default withRouter (class GameBoard extends Component {
     }
 
     handlePlaybackSpeed = (newSpeed) => {
-        this.props.setAppState({ playbackSpeed: newSpeed});  
+        this.props.setAppState({ 
+            playbackSpeed: newSpeed,
+            gameboard: this.props.playbackMap,
+            isPlaying: false
+        });  
+        clearInterval(this.props.playInt);
     }
 
     handleStop = () => {

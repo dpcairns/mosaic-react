@@ -8,9 +8,8 @@ import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import MusicOffIcon from '@material-ui/icons/MusicOff';
 import PlayArrowOutlinedIcon from '@material-ui/icons/PlayArrowOutlined';
 import StopOutlinedIcon from '@material-ui/icons/StopOutlined';
-
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import { Select, InputLabel, MenuItem } from '@material-ui/core';
 
 const useStyles = makeStyles({
   list: {
@@ -20,10 +19,8 @@ const useStyles = makeStyles({
     width: 'auto',
   },
 });
-// const storedUser = JSON.parse(localStorage.getItem('user'));
 
 const SwipeableTemporaryDrawer = withRouter(({history, isMuted, play, stop, isPlaying, playbackSpeed, handlePlaybackSpeed}) => {
-//   const realUser = user ? user : storedUser;
 
 
   const classes = useStyles();
@@ -36,11 +33,8 @@ const SwipeableTemporaryDrawer = withRouter(({history, isMuted, play, stop, isPl
     logBool: true,
   });
 
-  const [value, setValue] = React.useState(30);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    handlePlaybackSpeed(newValue);
+  const handleChange = (e) => {
+    handlePlaybackSpeed(Number(e.target.value));
   };
 
   const toggleDrawer = (side, open) => event => {
@@ -66,12 +60,14 @@ const SwipeableTemporaryDrawer = withRouter(({history, isMuted, play, stop, isPl
       {button()}
       <Button variant="contained" size="small" color="primary" onClick={e => play()} startIcon={<PlayArrowOutlinedIcon/>} disabled={isPlaying}>Play</Button>
       <Button variant="contained" size="small" color="primary" onClick={e => stop()} startIcon={<StopOutlinedIcon/>} disabled={!isPlaying}>Stop</Button>
-          <div id="music-slider">
-              <Typography id="input-slider" gutterBottom>
-                  Speed
-              </Typography>
-              <Slider id="music-slider" defaultValue={500} value={playbackSpeed} aria-labelledby="discrete-slider" step={1} min={200} max={1000} onChange={handleChange} track="inverted" />
-          </div>
+          <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel id="select-label">Speed</InputLabel>
+              <Select onChange={handleChange} labelId="select-label" id="select-outlined" value={playbackSpeed}>
+                  <MenuItem value="1000">Slow</MenuItem>
+                  <MenuItem value="500">Medium</MenuItem>
+                  <MenuItem value="200">Fast</MenuItem>
+              </Select>
+          </FormControl>
       </div>
   );
 
